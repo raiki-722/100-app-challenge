@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+# Day02: ダイス・デュエル（改良版）
+# 使い方例:
+#   python app.py                  # 既定: 先取2 (Best of 3)
+#   python app.py --best 5         # 先取3 (Best of 5)
+#   python app.py --no-critical    # クリティカル無効
+#   python app.py --draw give      # 引き分けは両者に1点
+#   python app.py --name "Raiki"   # プレイヤー名
+
 import argparse
 import csv
 import os

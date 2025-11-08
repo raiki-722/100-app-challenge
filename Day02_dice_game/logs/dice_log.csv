@@ -1,0 +1,4 @@
+﻿timestamp,player,cpu,winner,player_point,cpu_point,rule
+2025-11-08T15:33:34,You,CPU,You,1,0,win
+2025-11-08T15:33:37,You,CPU,CPU,0,1,lose
+2025-11-08T15:33:40,You,CPU,CPU,0,1,lose
