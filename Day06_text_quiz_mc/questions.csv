@@ -1,0 +1,6 @@
+question,choice1,choice2,choice3,choice4,answer
+Pythonで乱数を出す標準モジュールは？,math,random,time,os,2
+リストの長さを返す関数は？,len,size,length,count,1
+文字列を小文字にするメソッドは？,lowercase,downcase,lower,to_lower,3
+辞書型のキー集合を得るメソッドは？,get,items,keys,values,3
+for文で回数を指定するとき使うのは？,loop,range,seq,list,2
