@@ -14,8 +14,8 @@ RED    = (255, 80, 80)
 YELLOW = (255, 230, 80)
 
 # 自機設定
-PLAYER_WIDTH = 40
-PLAYER_HEIGHT = 25
+PLAYER_WIDTH = 50
+PLAYER_HEIGHT = 50
 PLAYER_SPEED = 5
 
 # 弾設定
@@ -24,8 +24,8 @@ BULLET_HEIGHT = 10
 BULLET_SPEED = -10
 
 # 敵設定
-ENEMY_WIDTH = 30
-ENEMY_HEIGHT = 20
+ENEMY_WIDTH = 40
+ENEMY_HEIGHT = 40
 ENEMY_MIN_SPEED = 2
 ENEMY_MAX_SPEED = 5
 ENEMY_SPAWN_INTERVAL = 800  # ミリ秒ごとに敵を追加
@@ -62,6 +62,37 @@ def main():
     pygame.display.set_caption("Day11 縦スクロールシューティング")
     clock = pygame.time.Clock()
     font = pygame.font.SysFont(None, 28)
+
+    # 画像読み込み
+    try:
+        # 背景
+        bg_img = pygame.image.load("background.png")
+        bg_img = pygame.transform.scale(bg_img, (WIDTH, HEIGHT))
+        
+        # 背景を暗くする処理
+        dark_surface = pygame.Surface((WIDTH, HEIGHT))
+        dark_surface.set_alpha(128) # 透明度 (0-255) 128で半透明
+        dark_surface.fill(BLACK)
+        bg_img.blit(dark_surface, (0, 0))
+        
+        # 自機
+        player_img = pygame.image.load("player.png")
+        player_img = pygame.transform.scale(player_img, (PLAYER_WIDTH, PLAYER_HEIGHT))
+        player_img.set_colorkey(BLACK) # 黒色を透過
+        
+        # 敵
+        enemy_img = pygame.image.load("enemy.png")
+        enemy_img = pygame.transform.scale(enemy_img, (ENEMY_WIDTH, ENEMY_HEIGHT))
+        enemy_img.set_colorkey(BLACK) # 黒色を透過
+
+    except FileNotFoundError:
+        print("画像ファイルが見つかりません。デフォルト描画を使用します。")
+        bg_img = None
+        player_img = None
+        enemy_img = None
+
+    # 背景スクロール用変数
+    bg_y = 0
 
     # 敵出現用タイマー
     pygame.time.set_timer(ENEMY_EVENT, ENEMY_SPAWN_INTERVAL)
@@ -113,6 +144,11 @@ def main():
             if player.right > WIDTH:
                 player.right = WIDTH
 
+            # --- 背景スクロール処理 ---
+            bg_y += 1 # スクロール速度
+            if bg_y >= HEIGHT:
+                bg_y = 0
+
             # --- 弾の移動 ---
             for b in bullets:
                 b["rect"].y += BULLET_SPEED
@@ -162,8 +198,18 @@ def main():
         # --- 描画 ---
         screen.fill(BLACK)
 
+        # 背景描画（スクロール）
+        if bg_img:
+            screen.blit(bg_img, (0, bg_y))
+            screen.blit(bg_img, (0, bg_y - HEIGHT))
+        else:
+            screen.fill(BLACK)
+
         # 自機
-        pygame.draw.rect(screen, BLUE, player)
+        if player_img:
+            screen.blit(player_img, player)
+        else:
+            pygame.draw.rect(screen, BLUE, player)
 
         # 弾
         for b in bullets:
@@ -171,7 +217,10 @@ def main():
 
         # 敵
         for e in enemies:
-            pygame.draw.rect(screen, RED, e["rect"])
+            if enemy_img:
+                screen.blit(enemy_img, e["rect"])
+            else:
+                pygame.draw.rect(screen, RED, e["rect"])
 
         # スコアとライフ
         score_surf = font.render(f"Score: {score}", True, WHITE)
@@ -181,7 +230,7 @@ def main():
 
         # ゲームオーバーメッセージ
         if game_over:
-            msg = "GAME OVER - Rで再スタート / ESCで終了"
+            msg = "GAME OVER - R to Restart / ESC to Quit"
             text = font.render(msg, True, WHITE)
             rect = text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
             screen.blit(text, rect)
